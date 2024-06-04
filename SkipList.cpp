@@ -5,7 +5,7 @@ using namespace std;
 
 skipList::skipList() {
 	header = nullptr;
-	level = 1;
+	level = 0;
 	sizeOfList = 0;
 } //end default constructor
 
@@ -35,32 +35,33 @@ int skipList::randomLevel() {
 
 void skipList::insert(ComputerScientist& data) 
 {
-	if (sizeOfList == 8)
-	{
-		cout << "stopPoint";
-	}
-	Node* current = header; // Main iterator
-	Node** update = new Node * [level]; // Trailer to keep track of the pointers
 	if (header == nullptr)
 	{
-		int newLevel = randomLevel();
+	
+		int newLevel = sizeOfList+1;
 		Node* newNode;
-		
 		createNode(data, newLevel, newNode);
-		header = newNode;
+		header = new Node(newLevel);
+		for (int i = 0; i < newLevel; i++)
+		{
+			header->forward[i] = newNode;
+		}
 		level = newLevel;
 
 		sizeOfList++;
 		newNode = nullptr;
-		delete[] update;
 		return;
 	}
-	
+
+	Node* current = header->forward[0]; // Main iterator
+	Node** update = new Node * [level]; // Trailer to keep track of the pointers
 	for (int i = level - 1; i >= 0; i--)
 	{ // Traverse the list from the top level
-	cout << current <<  " " << current->forward[i] << endl;
+
+		cout << current <<  " " << current->forward[i] << endl;
 		while (current->forward[i] != nullptr)
 		{ // Traverse the list until the next node is greater than the key
+		
 			if (current->forward[i]->data != nullptr && *(current->forward[i]->data) < data)
 			{
 				cout << *(current->forward[i]->data) << " " << (data) << endl;
@@ -77,21 +78,36 @@ void skipList::insert(ComputerScientist& data)
 
 	if (current == nullptr || !(*(current->data) == data))
 	{ // If the key is not in the list
-		int newLevel = randomLevel();
+		int newLevel = sizeOfList+1;
+		Node* newNode;
+		createNode(data, newLevel, newNode);
+
 		if (newLevel > level)
 		{ // If the new level is greater than the current level
 			Node** temp = new Node * [newLevel];
-			std::copy(update, update + level, temp);
+			std::copy(update, update +(level), temp);
 			for (int i = level; i < newLevel; i++)
 			{
-				temp[i] = header;
+				temp[i] = newNode;
+				
 			}
-			delete[] update;
 			update = temp;
+			
+			Node** temp2 = new Node * [newLevel];
+			std::copy(header->forward, header->forward + (level), temp2);
+			for (int i = level; i < newLevel; i++)
+			{
+				temp2[i] = newNode;
+
+			}
+			header->forward = temp2;
+			temp2 = nullptr;
+			temp = nullptr;
 			level = newLevel;
+		
+
 		}
-		Node* newNode;
-		createNode(data, newLevel, newNode);
+		
 
 		for (int i = 0; i < newLevel; i++)
 		{ // Insert the new node into the list
@@ -104,7 +120,7 @@ void skipList::insert(ComputerScientist& data)
 } //end insert
 
 
-void skipList::remove(ComputerScientist data)
+void skipList::remove(ComputerScientist& data)
 {
 	Node* current = header;
 	Node** update = new Node*[level];

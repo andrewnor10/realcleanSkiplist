@@ -20,9 +20,9 @@ class skipList {
 					forward[i] = nullptr;
 				}
 			}
-			Node() {
+			Node(int level) { // Really just used for header
 				data = nullptr;
-				forward = nullptr;
+				forward = new Node * [level];
 			}
 			Node(const Node& rhs) {
 				data = rhs.data;
@@ -40,7 +40,7 @@ class skipList {
 		skipList();
 		~skipList();
 		void insert(ComputerScientist& data);
-		void remove(ComputerScientist data);
+		void remove(ComputerScientist& data);
 		void print();
 		int size();
 		bool isEmpty();
@@ -53,7 +53,6 @@ class skipList {
 private:
 	Node* header;
 	int level; // Highest level of the list
-	int maxLevel;
 	int sizeOfList;
 };
 

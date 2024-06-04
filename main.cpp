@@ -39,7 +39,7 @@ vector<ComputerScientist*> load(const string& filename) {
 }
 
 int main() {
-	vector<ComputerScientist*> list = load("csList.txt");
+	vector<ComputerScientist*> list = load("csListSmall.txt");
 	skipList skipList;
 	for (auto& c : list) {
 		skipList.insert(*c);
