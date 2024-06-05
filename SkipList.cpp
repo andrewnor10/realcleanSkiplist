@@ -82,31 +82,37 @@ void skipList::insert(ComputerScientist& data)
 		Node* newNode;
 		createNode(data, newLevel, newNode);
 
-		if (newLevel > level)
-		{ // If the new level is greater than the current level
-			Node** temp = new Node * [newLevel];
-			std::copy(update, update +(level), temp);
+        if (newLevel > level)
+        { // If the new level is greater than the current level
+			// Allocate new arrays with the new level size
+			Node** newUpdate = new Node * [newLevel];
+			Node** newForward = new Node * [newLevel];
+
+			// Copy existing elements up to the current level
+			std::copy(update, update + level, newUpdate);
+			std::copy(header->forward, header->forward + level, newForward);
+
+			// Initialize new elements in newUpdate
 			for (int i = level; i < newLevel; i++)
 			{
-				temp[i] = newNode;
-				
+				newUpdate[i] = newNode;
 			}
-			update = temp;
-			
-			Node** temp2 = new Node * [newLevel];
-			std::copy(header->forward, header->forward + (level), temp2);
+
+			// Initialize new elements in newForward to newNode
 			for (int i = level; i < newLevel; i++)
 			{
-				temp2[i] = newNode;
-
+				newForward[i] = newNode;
 			}
-			header->forward = temp2;
-			temp2 = nullptr;
-			temp = nullptr;
-			level = newLevel;
-		
 
-		}
+			// Free old memory
+			delete[] update;
+			delete[] header->forward;
+
+			// Reassign pointers
+			update = newUpdate;
+			header->forward = newForward;
+			//  level = newLevel;
+        }
 		
 
 		for (int i = 0; i < newLevel; i++)
