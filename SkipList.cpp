@@ -16,7 +16,7 @@ void skipList::createNode(ComputerScientist& data, int NodeLevel, Node*& newNode
 	{
 		newNode->forward[i] = nullptr; // Level is 0 no 3 need to investigate
 	}
-	
+
 } // end createNode
 
 skipList::~skipList() {
@@ -33,12 +33,12 @@ int skipList::randomLevel() {
 } // end randomLevel
 
 
-void skipList::insert(ComputerScientist& data) 
+void skipList::insert(ComputerScientist& data)
 {
 	if (header == nullptr)
 	{
-	
-		int newLevel = sizeOfList+1;
+
+		int newLevel = sizeOfList + 1;
 		Node* newNode;
 		createNode(data, newLevel, newNode);
 		header = new Node(newLevel);
@@ -49,21 +49,24 @@ void skipList::insert(ComputerScientist& data)
 		level = newLevel;
 
 		sizeOfList++;
-		newNode = nullptr;
+		// newNode = nullptr;
 		return;
 	}
+	Node* current;
+	Node** update = new Node * [level]; // Main iterator
+	 // Trailer to keep track of the pointers
 
-	Node* current = header->forward[0]; // Main iterator
-	Node** update = new Node * [level]; // Trailer to keep track of the pointers
 	for (int i = level - 1; i >= 0; i--)
 	{ // Traverse the list from the top level
+		current = header->forward[level - i];
 
-		cout << current <<  " " << current->forward[i] << endl;
+		cout << current << " " << current->forward[i]->data->getID() << endl;
 		while (current->forward[i] != nullptr)
 		{ // Traverse the list until the next node is greater than the key
-		
+
 			if (current->forward[i]->data != nullptr && *(current->forward[i]->data) < data)
 			{
+
 				cout << *(current->forward[i]->data) << " " << (data) << endl;
 				current = current->forward[i];
 			}
@@ -71,6 +74,7 @@ void skipList::insert(ComputerScientist& data)
 			{
 				break;
 			}
+
 		}
 		update[i] = current;
 	}
@@ -78,12 +82,12 @@ void skipList::insert(ComputerScientist& data)
 
 	if (current == nullptr || !(*(current->data) == data))
 	{ // If the key is not in the list
-		int newLevel = sizeOfList+1;
+		int newLevel = sizeOfList + 1;
 		Node* newNode;
 		createNode(data, newLevel, newNode);
 
-        if (newLevel > level)
-        { // If the new level is greater than the current level
+		if (newLevel > level)
+		{ // If the new level is greater than the current level
 			// Allocate new arrays with the new level size
 			Node** newUpdate = new Node * [newLevel];
 			Node** newForward = new Node * [newLevel];
@@ -111,9 +115,9 @@ void skipList::insert(ComputerScientist& data)
 			// Reassign pointers
 			update = newUpdate;
 			header->forward = newForward;
-			//  level = newLevel;
-        }
-		
+			level = newLevel;
+		}
+
 
 		for (int i = 0; i < newLevel; i++)
 		{ // Insert the new node into the list
@@ -121,7 +125,7 @@ void skipList::insert(ComputerScientist& data)
 			update[i]->forward[i] = newNode;
 		}
 		sizeOfList++;
-	} 
+	}
 	delete[] update;
 } //end insert
 
@@ -129,7 +133,7 @@ void skipList::insert(ComputerScientist& data)
 void skipList::remove(ComputerScientist& data)
 {
 	Node* current = header;
-	Node** update = new Node*[level];
+	Node** update = new Node * [level];
 	for (int i = level - 1; i >= 0; i--)
 	{
 		while (current->forward[i] != nullptr && *(current->forward[i]->data) < data)
@@ -167,7 +171,7 @@ void skipList::print() {
 		cout << "Level " << i << ": ";
 		while (current != nullptr)
 		{
-			cout << *(current->data) << " ";
+			cout << (current->data->getID()) << " ";
 			current = current->forward[i];
 		}
 		cout << endl;
@@ -194,4 +198,4 @@ void skipList::deleteList() {
 }
 
 
-	
+
